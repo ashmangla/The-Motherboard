@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 
 app = FastAPI()
@@ -13,7 +13,10 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
+            print(f"Server received: {data}")
             await websocket.send_text(f"Server received: {data}")
             # Here we will eventually hook up the agent logic
+    except WebSocketDisconnect:
+        print("Client disconnected")
     except Exception as e:
         print(f"WebSocket error: {e}")
